@@ -1,7 +1,5 @@
-<template>
-  <div class="home">
-    内容
-  </div>
+<template lang="pug">
+.page-1
 </template>
 
 <script>
