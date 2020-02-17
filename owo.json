@@ -4,7 +4,6 @@
 	"title": "{TAG_14226_TAG}",
 	"scheme": [],
 	"outFolder": "./dist",
-	"container": "scale-box",
 	"resourceFolder": "./src/resource",
 	"headList": [
 		{
