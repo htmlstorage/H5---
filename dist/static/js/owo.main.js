@@ -1,4 +1,4 @@
-// Mon Feb 24 2020 16:28:36 GMT+0800 (GMT+08:00)
+// Mon Feb 24 2020 23:10:17 GMT+0800 (GMT+08:00)
 var owo = {tool: {},state: {},};
 /* 方法合集 */
 var _owo = {}
@@ -655,4 +655,49 @@ owo.tool.toast = function (text, config) {
 }
 
 
+
+
+// 这是用于代码调试的自动刷新代码，他不应该出现在正式上线版本!
+if ("WebSocket" in window) {
+  // 打开一个 web socket
+  if (!window._owo.ws) window._owo.ws = new WebSocket("ws://" + window.location.host)
+  window._owo.ws.onmessage = function (evt) { 
+    if (evt.data == 'reload') {
+      location.reload()
+    }
+  }
+  window._owo.ws.onclose = function() { 
+    console.info('与服务器断开连接')
+  }
+} else {
+  console.error('浏览器不支持WebSocket')
+}
+
+console.log('owo-远程调试已开启!')
+// 这是用于远程调试的代码，他不应该出现在正式上线版本!
+if ("WebSocket" in window) {
+  // 打开一个 web socket
+  if (!window._owo.ws) window._owo.ws = new WebSocket("ws://" + window.location.host)
+  window.log = function (message) {
+    console.info(message)
+    // 判断ws连接成功后，才会发送消息
+    if (window._owo.ws.readyState == 1) {
+      window._owo.ws.send(JSON.stringify({
+        type: "log",
+        message: message
+      }))
+    }
+  }
+  window.onerror = function() {
+    window._owo.ws.send(JSON.stringify({
+      type: "log",
+      message: arguments[1] + ' 第 ' + arguments[2] + ' 行 ' + arguments[3] + ' 列 发生错误: ' + arguments[0] + ' 调用堆栈: ' + arguments[4]
+    }))
+  }
+} else {
+  window.log = function (message) {
+    console.info(message)
+  }
+  console.error('浏览器不支持WebSocket')
+}
 
