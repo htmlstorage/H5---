@@ -6,12 +6,12 @@ body, html, .page {
   height: 100%;
   overflow: hidden;
   user-select: text;
-  font: normal 12px/180% "SimSun";
+  font-family: 'pingfang SC','helvetica neue',arial,'hiragino sans gb','microsoft yahei ui','microsoft yahei','simsun',sans-serif;
   -webkit-overflow-scrolling: touch;
   position: relative;
 }
 html {
-  background-color: white;
+  background-color: #ededed;
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
@@ -40,4 +40,22 @@ h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, bu
   display: block;
   visibility: hidden;
   clear: both;
+}
+
+@font-face {
+  font-family: 'iconfont';  /* project id 1652918 */
+  src: url('//at.alicdn.com/t/font_1652918_4yh6a6m9q02.eot');
+  src: url('//at.alicdn.com/t/font_1652918_4yh6a6m9q02.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1652918_4yh6a6m9q02.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1652918_4yh6a6m9q02.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1652918_4yh6a6m9q02.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1652918_4yh6a6m9q02.svg#iconfont') format('svg');
+}
+
+.icon {
+  font-family: "iconfont";
+  font-style: normal;
+  font-weight: normal;
+  display: inline-block;
+  user-select: none;
 }

@@ -80,6 +80,10 @@
 			"name": "main",
 			"src": "./src/main.js",
 			"resource": true
+		},
+		{
+			"name": "xmlrpc",
+			"src": "./src/resource/xmlrpc.js"
 		}
 	],
 	"styleList": [
@@ -91,8 +95,18 @@
 	],
 	"pageList": [
 		{
-			"name": "page1",
-			"src": "./src/page/page1.owo",
+			"name": "login",
+			"src": "./src/page/login.owo",
+			"type": "page"
+		},
+		{
+			"name": "two",
+			"src": "./src/page/two.owo",
+			"type": "page"
+		},
+		{
+			"name": "three",
+			"src": "./src/page/three.owo",
 			"type": "page"
 		}
 	],
@@ -115,7 +129,7 @@
 			"serverPort": 8000,
 			"server": true,
 			"autoReload": true,
-			"remoteDebug": false,
+			"remoteDebug": true,
 			"watcherEnable": true
 		},
 		"build": {

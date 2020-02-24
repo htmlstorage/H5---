@@ -1,0 +1,83 @@
+<template lang="pug">
+.page-1
+  .title-bar 服务器列表
+  .server-list-item(o-for="this.data.serverList" o-tap="toThree({key})")
+    .icon &#xe639;
+    .name {value.url}
+</template>
+
+<script>
+  module.exports = {
+    data: {
+      serverList: null
+    },
+    created: function () {
+      console.log(this.data.serverList)
+      if (this.data.serverList === null) {
+        owo.go({
+          page: 'login',
+          ani: "moveToRight/moveFromLeft",
+          noBack: true
+        })
+        return
+      }
+      // 检测运行
+      setTimeout(() => {
+        const serverDomList = owo.query('.server-list-item')
+        for (const ind in this.data.serverList) {
+          
+          const element = this.data.serverList[ind]
+          xmlRpcClient (`http://${element.userName}:${element.passWord}@${element.url}`, "supervisor.getState", undefined, 'xml', (err, data) => {
+            if (err) {console.error(err); return;}
+            if (data.statecode == 1) {
+              element.state = true
+              serverDomList[ind].classList.add('active')
+              
+            }
+          })
+        }
+      }, 0);
+    },
+    toThree: function (ind) {
+      owo.script.three.data.serverInfo = this.data.serverList[ind]
+      owo.go({
+        page: 'three',
+        ani: "moveToLeft/moveFromRight/moveToRight/moveFromLeft",
+        noBack: true
+      })
+    }
+  }
+</script>
+
+
+<style lang="less">
+.page-1 {
+  background-color: white;
+}
+.title-bar {
+  height: 50px;
+  line-height: 50px;
+  background-color: #ededed;
+  padding: 0 10px;
+  color: #232323;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 1px solid #d5d5d5;
+}
+.server-list-item {
+  display: flex;
+  line-height: 60px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #d8d8d8;
+  .icon {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    font-size: 32px;
+    color: #ccc;
+  }
+}
+.active .icon {
+  color: #009fe9;
+}
+</style>
