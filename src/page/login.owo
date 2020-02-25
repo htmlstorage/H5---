@@ -2,20 +2,23 @@
 .login
   .login-title-bar
     img.back(src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAeCAYAAAAhDE4sAAABlElEQVRIiaXVOUoEQRTG8f+ouETmfQADMXJAjAwEcccFEbyAiAzDOK5HcFdERExNRMWVwdFEJvEMnkBMNXAX5cFrGduq7urxgw66X/Gjqql6lUgmk5SQSmAXaADagLuKEpE9YEDfr4HWsn8ikjogF2dGguwDfYZawRUS5BDoNdS2gIzL0sKQTSAFfEVBghxZkA0gLYi8hC1NkBOg04JkfERim1FVCLIeRGxQdQiyBkwEERMkyDHQYUBWgaxlBb+gGp2JCVkGJm0IRT+7FjgDWizIdBjiQ4JcAU2G+iIwG4WgS8tbkHlXxIc+XAdHQT3AjaE2ByzEgR50zxQM9RlgyRWSPAJd+tODmQJWXCHJE9APXBrGZXVXJ1wgybNiecPYjJ4zI2Y6ay+KXRhqaT35fzDb6X9VLGeopbSh/cLCGtsbMAicG2rj2mJ/sKgOKdgQcGqojQHbPubSswUb1vYSzCiwI1i553kOFp8K1etTnEbAi3NBysxG9EYJpjnuTfuu2EHRt1ugvZS7X7qFYLJFZJndwP03ofpNCLJo2TcAAAAASUVORK5CYII=")
-    .register 注册
-  .image-box
-    img(src="https://cunchu.site/puge/login/image-box.png")
-  .hellow-text 嗨，欢迎回来!
-  .user-name-bar.input-bar
-    img.bar-icon(src="https://cunchu.site/puge/login/user.png")
-    input(type="text" o-value="this.data.userName" placeholder="用户名")
-  .pass-word-bar.input-bar
-    img.bar-icon(src="https://cunchu.site/puge/login/password.png")
-    input(type="password" o-value="this.data.passWord" placeholder="密码")
-  .button(o-tap="login" o-hover="radial-out") 登录
-  .tool-bar
-    .left
-    .right 忘记密码 
+    .register(go="//register/moveToLeft/moveFromRight/moveToRight/moveFromLeft") 注册
+  view.router(name="loginContent")
+    .view-login(route="login")
+      .image-box
+        img(src="https://cunchu.site/puge/login/image-box.png")
+      .hellow-text 嗨，欢迎回来!
+      .user-name-bar.input-bar
+        img.bar-icon(src="https://cunchu.site/puge/login/user.png")
+        input(type="text" o-value="this.data.userName" placeholder="用户名")
+      .pass-word-bar.input-bar
+        img.bar-icon(src="https://cunchu.site/puge/login/password.png")
+        input(type="password" o-value="this.data.passWord" placeholder="密码")
+      .button(o-tap="login" o-hover="radial-out") 登录
+      .tool-bar
+        .left
+        .right(go-route="") 忘记密码
+    .view-register(route="register")
 </template>
 
 <script>

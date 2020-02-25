@@ -1,4 +1,4 @@
-// Mon Feb 24 2020 23:10:17 GMT+0800 (GMT+08:00)
+// Tue Feb 25 2020 18:58:54 GMT+0800 (GMT+08:00)
 var owo = {tool: {},state: {},};
 /* 方法合集 */
 var _owo = {}
@@ -72,11 +72,11 @@ _owo.bindEvent = function (eventName, eventFor, tempDom, moudleScript) {
 /* owo事件处理 */
 // 参数1: 当前正在处理的dom节点
 // 参数2: 当前正在处理的模块名称
-function handleEvent (moudleScript) {
-  
+function handleEvent (moudleScript, enterDom) {
   var moudleScript = moudleScript || this
-  if (!moudleScript.$el) return
-  var tempDom = moudleScript.$el
+  var enterDom = enterDom || moudleScript.$el
+  if (!enterDom) return
+  var tempDom = enterDom
   
 
   
@@ -231,7 +231,7 @@ function handleEvent (moudleScript) {
       console.info(tempDom)
     }
   }
-  recursion(moudleScript.$el)
+  recursion(enterDom)
   // 递归处理子模板
   for (var key in moudleScript.template) {
     moudleScript.template[key].$el = tempDom.querySelector('[template=' + key + ']')
@@ -246,6 +246,31 @@ function owoPageInit () {
   for (var key in this.template) {
     var templateScript = this.template[key]
     _owo.runCreated(templateScript)
+  }
+  
+  // 判断页面中是否有路由
+  if (this.view) {
+    owo.state.urlVariable = _owo.getQueryVariable()
+    temp = []
+    for (var viewName in this.view) {
+      var routeList = this.view[viewName]
+      this.view[viewName] = new View(routeList, viewName, this['$el'])
+      // 标识是否没有指定显示哪个路由
+      // 从url中获取路由信息
+      var activeRouteIndex = 0
+      if (viewName) {
+        var urlViewName = owo.state.urlVariable['view-' + viewName]
+        activeRouteIndex = this.view[viewName][urlViewName] ? this.view[viewName][urlViewName]._index : 0
+      }
+      // 激活对应路由
+      this.view[viewName].showIndex(activeRouteIndex)
+      var activeView = this.view[viewName][urlViewName] || this.view[viewName]._list[0]
+      if (activeView) {
+        activeView.owoPageInit()
+        temp.push(this.view[viewName])
+      }
+    }
+    this.view._list = temp
   }
   
 }
@@ -424,6 +449,113 @@ owo.query = function (str) {
 }
 
 
+// 特殊类型
+function View(routeList, viewName, entryDom) {
+  this._list = []
+  for (var routeInd in routeList) {
+    var routeItem = routeList[routeInd]
+    this._list[routeInd] = routeItem
+    this._list[routeInd]._index = routeInd
+    this._list[routeInd].$el = entryDom.querySelector('[view="' + viewName +'"] [route="' + routeItem._name +'"]')
+    // 错误处理
+    if (!this._list[routeInd].$el) {
+      console.error('找不到视窗 ' + viewName + ' 中的路由: ' + routeItem._name)
+      break
+    }
+    this._list[routeInd] = new Page(this._list[routeInd])
+    this._list[routeInd].$el.setAttribute('route-ind', routeInd)
+    this[routeItem._name] = this._list[routeInd]
+  }
+}
+
+View.prototype.showIndex = function (ind) {
+  for (var routeIndex = 0; routeIndex < this._list.length; routeIndex++) {
+    var element = this._list[routeIndex];
+    if (routeIndex == ind) {
+      element.$el.style.display = 'block'
+      element.$el.setAttribute('route-active', 'true')
+      element.handleEvent(owo.script[owo.activePage], element.$el)
+      this["_activeName"] = element._name
+      this["_activeIndex"] = ind
+    } else {
+      element.$el.style.display = 'none'
+      element.$el.removeAttribute('route-active')
+    }
+  }
+  owo.setActiveRouteClass()
+}
+
+View.prototype.showName = function (name) {
+  for (var routeIndex = 0; routeIndex < this._list.length; routeIndex++) {
+    var element = this._list[routeIndex];
+    if (element._name == name) {
+      element.$el.style.display = 'block'
+      element.$el.setAttribute('route-active', 'true')
+      element.handleEvent(owo.script[owo.activePage], element.$el)
+      this["_activeName"] = name
+      this["_activeIndex"] = element._index
+    } else {
+      element.$el.style.display = 'none'
+      element.$el.removeAttribute('route-active')
+    }
+  }
+  owo.setActiveRouteClass()
+}
+View.prototype.owoPageInit = owoPageInit
+View.prototype.handleEvent = handleEvent
+// 获取URL中的参数
+_owo.getQueryVariable = function () {
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  var temp = {}
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=");
+    temp[pair[0]] = pair[1];
+  }
+  return temp;
+}
+_owo.getViewChange = function () {
+  var activeScript = owo.script[owo.activePage]
+  // 路由列表
+  var viewList = activeScript.$el.querySelectorAll('[view]')
+  // 获取url参数
+  owo.state.urlVariable = _owo.getQueryVariable()
+  for (var index = 0; index < viewList.length; index++) {
+    var viewItem = viewList[index];
+    var viewName = viewItem.getAttribute('view')
+    var viewValue = owo.state.urlVariable['view-' + viewName]
+    if (viewValue) {
+      activeScript.view[viewName].showName(viewValue)
+    } else {
+      activeScript.view[viewName].showIndex(0)
+    }
+  }
+}
+
+owo.setActiveRouteClass = function () {
+  var activePageName = owo.activePage
+  var activeScript = owo.script[activePageName]
+  var activeViewName = activeScript.$el.querySelector('[view]').attributes['view'].value
+  var activeRouteName = activeScript.view[activeViewName]._activeName
+  var goList = activeScript.$el.querySelectorAll('[go]')
+  for (let index = 0; index < goList.length; index++) {
+    const element = goList[index];
+    if (element.attributes["page"] && element.attributes["page"].value !== '' && element.attributes["page"].value !== activePageName) {
+      element.classList.remove('active')
+      continue
+    }
+    if (element.attributes["view"] && element.attributes["view"].value !== '' && element.attributes["view"].value !== activeViewName) {
+      element.classList.remove('active')
+      continue
+    }
+    if (element.attributes["route"] && element.attributes["route"].value !== '' && element.attributes["route"].value !== activeRouteName) {
+      element.classList.remove('active')
+      continue
+    }
+    element.classList.add('active')
+  }
+}
+
 
 
 owo.go = function (config) {
@@ -491,6 +623,24 @@ owo.go = function (config) {
   }
 }
 
+
+var toList = document.querySelectorAll('[go]')
+for (var index = 0; index < toList.length; index++) {
+  var element = toList[index]
+  element.onclick = function () {
+    var target = this.attributes['go'].value.split('/')
+    owo.go({
+      page: target[0],
+      view: target[1],
+      route: target[2],
+      inAnimation: target[3],
+      outAnimation: target[4],
+      backInAnimation: target[5],
+      backOutAnimation: target[6],
+      noBack: target[7],
+    })
+  }
+}
 
 // 沙盒运行
 function shaheRun (code) {
@@ -578,6 +728,8 @@ _owo.showPage = function() {
     window.owo.activePage = page
     owo.script[page].owoPageInit()
     owo.script[page].handleEvent()
+    
+    _owo.getViewChange()
     
     // 处理插件
     var plugList = document.querySelectorAll('.owo-block')
