@@ -1,4 +1,4 @@
-// Wed Feb 26 2020 21:53:54 GMT+0800 (GMT+08:00)
+// Thu Feb 27 2020 00:20:51 GMT+0800 (GMT+08:00)
 var owo = {tool: {},state: {},};
 /* 方法合集 */
 var _owo = {}
@@ -283,6 +283,16 @@ window.addEventListener("popstate", function(e) {
 // 页面切换
 
 function animation (oldDom, newDom, animationIn, animationOut, forward) {
+  // 没有动画处理
+  if (!animationIn || !animationOut) {
+    if (oldDom) {
+      // 隐藏掉旧的节点
+      oldDom.style.display = 'none'
+    }
+    // 查找页面跳转后的page
+    newDom.style.display = 'block'
+    return
+  }
   // 动画延迟
   var delay = 0
   // 获取父元素
@@ -329,7 +339,7 @@ function animation (oldDom, newDom, animationIn, animationOut, forward) {
   // 旧DOM执行函数
   function oldDomFun (e) {
     // 排除非框架引起的结束事件
-    if (e.target.getAttribute('template')) {
+    if (e.target.getAttribute('template') || e.target.getAttribute('route')) {
       // 移除监听
       oldDom.removeEventListener('animationend', oldDomFun, false)
       // 延迟后再清除，防止动画还没完成
@@ -365,11 +375,13 @@ function animation (oldDom, newDom, animationIn, animationOut, forward) {
       }
     }, delay);
   }
+  owo.state._animation = null
 }
 
 
 // 切换页面前的准备工作
 function switchPage (oldUrlParam, newUrlParam) {
+  
   var oldPage = oldUrlParam ? oldUrlParam.split('&')[0] : owo.entry
   var newPage = newUrlParam ? newUrlParam.split('&')[0] : owo.entry
   // 查找页面跳转前的page页(dom节点)
@@ -379,14 +391,16 @@ function switchPage (oldUrlParam, newUrlParam) {
   if (!newDom) {console.error('页面不存在!'); return}
   
   // 判断是否有动画效果
-  if (!owo.script[newPage]._animation) owo.script[newPage]._animation = {}
+  if (!owo.state._animation) owo.state._animation = {}
   // 直接.in会在ie下报错
-  var animationIn = owo.script[newPage]._animation['in']
-  var animationOut = owo.script[newPage]._animation['out']
+  var animationIn = owo.state._animation['in']
+  var animationOut = owo.state._animation['out']
+  var forward = owo.state._animation['forward']
   // 全局跳转设置判断
   if (owo.state.go) {
     animationIn = animationIn || owo.state.go.inAnimation
     animationOut = animationOut || owo.state.go.outAnimation
+    forward = forward || owo.state.go.forward
   }
   
   setTimeout(() => {
@@ -399,7 +413,7 @@ function switchPage (oldUrlParam, newUrlParam) {
     if (window.owo.script[newPage].view) window.owo.script[newPage].view._list[0].showIndex(0)
   }, 0)
   if (animationIn || animationOut) {
-    animation(oldDom, newDom, animationIn.split('&&'), animationOut.split('&&'))
+    animation(oldDom, newDom, animationIn.split('&&'), animationOut.split('&&'), forward)
     return
   }
   
@@ -494,19 +508,20 @@ View.prototype.showIndex = function (ind) {
 }
 
 View.prototype.showName = function (name) {
-  for (var routeIndex = 0; routeIndex < this._list.length; routeIndex++) {
-    var element = this._list[routeIndex];
-    if (element._name == name) {
-      element.$el.style.display = 'block'
-      element.$el.setAttribute('route-active', 'true')
-      element.handleEvent(owo.script[owo.activePage], element.$el)
-      this["_activeName"] = name
-      this["_activeIndex"] = element._index
-    } else {
-      element.$el.style.display = 'none'
-      element.$el.removeAttribute('route-active')
-    }
+  var oldRoute = this[this._activeName]
+  var newRoute = this[name]
+  this["_activeName"] = newRoute._name
+  this["_activeIndex"] = newRoute._index
+  newRoute.handleEvent(owo.script[owo.activePage], newRoute.$el)
+  newRoute.$el.setAttribute('route-active', 'true')
+  oldRoute.$el.removeAttribute('route-active')
+  if (owo.state._animation) {
+    var animationValue = owo.state._animation
+    animation(oldRoute.$el, newRoute.$el, animationValue.in.split('&&'), animationValue.out.split('&&'))
+  } else {
+    animation(oldRoute.$el, newRoute.$el)
   }
+  
   owo.setActiveRouteClass(this)
 }
 View.prototype.owoPageInit = owoPageInit
@@ -576,25 +591,17 @@ owo.go = function (config) {
     const temp = config['ani'].split('/')
     config.inAnimation = temp[0]
     config.outAnimation = temp[1]
-    config.backInAnimation = temp[2]
-    config.backOutAnimation = temp[3]
   }
-  if (config.page) {
-    if (!owo.script[config.page]) {console.error("导航到不存在的页面: " + config.page); return}
-    if (config.page == owo.activePage) return
-    owo.script[config.page]._animation = {
+  if (config.inAnimation && config.outAnimation) {
+    owo.state._animation = {
       "in": config.inAnimation,
       "out": config.outAnimation,
       "forward": true
     }
-    // 如果有返回动画那么设置返回动画
-    if (config.backInAnimation && config.backOutAnimation) {
-      owo.script[owo.activePage]._animation = {
-        "in": config.backInAnimation,
-        "out": config.backOutAnimation,
-        "forward": false
-      }
-    }
+  }
+  if (config.page) {
+    if (!owo.script[config.page]) {console.error("导航到不存在的页面: " + config.page); return}
+    if (config.page == owo.activePage) return
     pageString = '#' + config.page
   }
   if (config.route) {
@@ -640,9 +647,7 @@ for (var index = 0; index < toList.length; index++) {
       route: target[2],
       inAnimation: target[3],
       outAnimation: target[4],
-      backInAnimation: target[5],
-      backOutAnimation: target[6],
-      noBack: target[7],
+      noBack: target[5],
     })
   }
 }

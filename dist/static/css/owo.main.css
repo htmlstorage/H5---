@@ -358,36 +358,6 @@ li {
   background-color: skyblue;
 }
 /* 页面切换动画 */
-.o-page-moveToLeft {
-	-webkit-animation: moveToLeft .6s ease both;
-	-moz-animation: moveToLeft .6s ease both;
-	animation: moveToLeft .6s ease both;
-}
-
-@-webkit-keyframes moveToLeft {
-	to { -webkit-transform: translateX(-100%); }
-}
-@-moz-keyframes moveToLeft {
-	to { -moz-transform: translateX(-100%); }
-}
-@keyframes moveToLeft {
-	to { transform: translateX(-100%); }
-}
-.o-page-moveFromRight {
-	-webkit-animation: moveFromRight .6s ease both;
-	-moz-animation: moveFromRight .6s ease both;
-	animation: moveFromRight .6s ease both;
-}
-
-@-webkit-keyframes moveFromRight {
-	from { -webkit-transform: translateX(100%); }
-}
-@-moz-keyframes moveFromRight {
-	from { -moz-transform: translateX(100%); }
-}
-@keyframes moveFromRight {
-	from { transform: translateX(100%); }
-}
 .o-page-moveToRight {
 	-webkit-animation: moveToRight .6s ease both;
 	-moz-animation: moveToRight .6s ease both;
@@ -419,4 +389,34 @@ li {
 	from { transform: translateX(-100%); }
 }
 
+.o-page-moveToLeft {
+	-webkit-animation: moveToLeft .6s ease both;
+	-moz-animation: moveToLeft .6s ease both;
+	animation: moveToLeft .6s ease both;
+}
+
+@-webkit-keyframes moveToLeft {
+	to { -webkit-transform: translateX(-100%); }
+}
+@-moz-keyframes moveToLeft {
+	to { -moz-transform: translateX(-100%); }
+}
+@keyframes moveToLeft {
+	to { transform: translateX(-100%); }
+}
+.o-page-moveFromRight {
+	-webkit-animation: moveFromRight .6s ease both;
+	-moz-animation: moveFromRight .6s ease both;
+	animation: moveFromRight .6s ease both;
+}
+
+@-webkit-keyframes moveFromRight {
+	from { -webkit-transform: translateX(100%); }
+}
+@-moz-keyframes moveFromRight {
+	from { -moz-transform: translateX(100%); }
+}
+@keyframes moveFromRight {
+	from { transform: translateX(100%); }
+}
 

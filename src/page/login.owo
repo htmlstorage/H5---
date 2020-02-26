@@ -1,8 +1,8 @@
 <template lang="pug">
 .login
   .login-title-bar
-    img.back(src="https://cunchu.site/puge/login/back.png" go="//login/moveToRight/moveFromLeft/moveToLeft/moveFromRight/true")
-    .register(go="//register/moveToLeft/moveFromRight/moveToRight/moveFromLeft/true") 注册
+    img.back(src="https://cunchu.site/puge/login/back.png" go="//login/moveToRight/moveFromLeft/true")
+    .register(go="//register/moveToLeft/moveFromRight/true") 注册
   view.router(name="loginContent")
     .view-login(route="login")
       .image-box
@@ -36,6 +36,12 @@
       passWord: "mmit7750"
     },
     created: function () {
+      // 全局路由动画设置
+      owo.state.go = {
+        animationIn: "moveToRight",
+        animationOut: "moveFromLeft",
+        forward: false
+      }
     },
     login: function () {
       fetch(`http://154.8.196.163:8006/login?username=${this.data.userName}&password=${this.data.passWord}&type=supervisor`).then((response) => {return response.json();}).then((res) => {
@@ -44,7 +50,7 @@
           if (res.data.data !== '') owo.script.two.data.serverList = JSON.parse(res.data.data)
           owo.go({
             page: 'two',
-            ani: "moveToLeft/moveFromRight/moveToRight/moveFromLeft",
+            ani: "moveToLeft/moveFromRight",
             noBack: true
           })
         }
