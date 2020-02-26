@@ -1,8 +1,8 @@
 <template lang="pug">
 .login
   .login-title-bar
-    img.back(src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAeCAYAAAAhDE4sAAABlElEQVRIiaXVOUoEQRTG8f+ouETmfQADMXJAjAwEcccFEbyAiAzDOK5HcFdERExNRMWVwdFEJvEMnkBMNXAX5cFrGduq7urxgw66X/Gjqql6lUgmk5SQSmAXaADagLuKEpE9YEDfr4HWsn8ikjogF2dGguwDfYZawRUS5BDoNdS2gIzL0sKQTSAFfEVBghxZkA0gLYi8hC1NkBOg04JkfERim1FVCLIeRGxQdQiyBkwEERMkyDHQYUBWgaxlBb+gGp2JCVkGJm0IRT+7FjgDWizIdBjiQ4JcAU2G+iIwG4WgS8tbkHlXxIc+XAdHQT3AjaE2ByzEgR50zxQM9RlgyRWSPAJd+tODmQJWXCHJE9APXBrGZXVXJ1wgybNiecPYjJ4zI2Y6ay+KXRhqaT35fzDb6X9VLGeopbSh/cLCGtsbMAicG2rj2mJ/sKgOKdgQcGqojQHbPubSswUb1vYSzCiwI1i553kOFp8K1etTnEbAi3NBysxG9EYJpjnuTfuu2EHRt1ugvZS7X7qFYLJFZJndwP03ofpNCLJo2TcAAAAASUVORK5CYII=")
-    .register(go="//register/moveToLeft/moveFromRight/moveToRight/moveFromLeft") 注册
+    img.back(src="https://cunchu.site/puge/login/back.png" go="//login/moveToRight/moveFromLeft/moveToLeft/moveFromRight/true")
+    .register(go="//register/moveToLeft/moveFromRight/moveToRight/moveFromLeft/true") 注册
   view.router(name="loginContent")
     .view-login(route="login")
       .image-box
@@ -19,6 +19,14 @@
         .left
         .right(go-route="") 忘记密码
     .view-register(route="register")
+      //- 装饰背景
+      img.bg-1(src="https://cunchu.site/puge/login/art.png")
+      p 欢迎注册PUGE账号
+      input.register-input(type="text" placeholder="用户名")
+      input.register-input(type="password" placeholder="密码")
+      input.register-input(type="password" placeholder="确认密码")
+      input.register-input(type="text" placeholder="邮箱")
+      .button() 注册
 </template>
 
 <script>
@@ -57,12 +65,20 @@
   justify-content: space-between;
   height: 45px;
   align-items: center;
-  padding: 0 10px;
   .back {
     width: 12px;
+    margin: 13px;
+    display: block;
   }
   .register {
-    font-size: 20px; 
+    font-size: 20px;
+    line-height: 45px;
+    padding-right: 10px;
+  }
+  .active {
+    opacity: 0;
+    user-select: none;
+    pointer-events: none;
   }
 }
 .image-box img {
@@ -92,35 +108,46 @@
 }
 input {
   border: none;
-  background-color: transparent;
-  height: 100%;
-  padding-left: 17%;
   display: block;
   width: 83%;
   font-size: 18px;
   border-radius: 25px;
   outline: none;
 }
-input:active {
-  box-shadow: 1px 1px 5px #ccc;
-}
-.input-bar {
-  background-color: #f7f8fa;
-  height: 50px;
-  border-radius: 25px;
-  width: 84%;
-  margin: 20px auto;
-  position: relative;
-  overflow: hidden;
-  .bar-icon {
-    width: 20px;
-    position: absolute;
-    left: 20px;
-    top: 0px;
-    bottom: 0;
-    margin: auto;
+.view-login {
+  input {
+    border: none;
+    background-color: transparent;
+    height: 100%;
+    padding-left: 17%;
+    display: block;
+    width: 83%;
+    font-size: 18px;
+    border-radius: 25px;
+    outline: none;
+  }
+  input:active {
+    box-shadow: 1px 1px 5px #ccc;
+  }
+  .input-bar {
+    background-color: #f7f8fa;
+    height: 50px;
+    border-radius: 25px;
+    width: 84%;
+    margin: 20px auto;
+    position: relative;
+    overflow: hidden;
+    .bar-icon {
+      width: 20px;
+      position: absolute;
+      left: 20px;
+      top: 0px;
+      bottom: 0;
+      margin: auto;
+    }
   }
 }
+
 .tool-bar {
   line-height: 50px;
   display: flex;
@@ -130,4 +157,45 @@ input:active {
   color: #262626;
   font-size: 14px;
 }
+.router {
+  height: calc(100% - 45px);
+  overflow: hidden;
+  width: 100%;
+  [route] {
+    width: 100%;
+    height: 100%;
+  }
+}
+.view-register {
+  .bg-1 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 47vw;
+  }
+  p {
+    line-height: 40px;
+    font-size: 23px;
+    padding-top: 60px;
+    z-index: 99;
+    background-image: url(https://cunchu.site/puge/login/Signup.png);
+    background-size: 91vw;
+    background-repeat: no-repeat;
+    background-position-y: 15px;
+    padding-left: 20px;
+    font-weight: bold;
+  }
+  .register-input {
+    height: 50px;
+    background-color: #f7f7fb;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding: 0 5vw;
+    width: 73vw;
+  }
+  .button {
+    background-color: #fa4169;
+  }
+}
+
 </style>
