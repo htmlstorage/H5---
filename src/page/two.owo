@@ -1,6 +1,10 @@
 <template lang="pug">
 .page-1
-  .title-bar 服务器列表
+  .login-title-bar
+    .left
+      img.back(src="https://cunchu.site/puge/login/back.png" o-tap="history.back(-1)")
+      span 服务器列表
+    .right
   .server-list-item(o-for="this.data.serverList" o-tap="toThree({key})")
     .icon &#xe639;
     .name {value.url}
@@ -16,8 +20,7 @@
       if (this.data.serverList === null) {
         owo.go({
           page: 'login',
-          ani: "moveToRight/moveFromLeft",
-          noBack: true
+          ani: "moveToRight/moveFromLeft"
         })
         return
       }
@@ -42,8 +45,7 @@
       owo.script.three.data.serverInfo = this.data.serverList[ind]
       owo.go({
         page: 'three',
-        ani: "moveToLeft/moveFromRight/moveToRight/moveFromLeft",
-        noBack: true
+        ani: "moveToLeft/moveFromRight/moveToRight/moveFromLeft"
       })
     }
   }
@@ -51,9 +53,6 @@
 
 
 <style lang="less">
-.page-1 {
-  background-color: white;
-}
 .title-bar {
   height: 50px;
   line-height: 50px;
@@ -67,7 +66,7 @@
 .server-list-item {
   display: flex;
   line-height: 60px;
-  background-color: #ffffff;
+  background-color: lavenderblush;
   border-bottom: 1px solid #d8d8d8;
   .icon {
     width: 60px;

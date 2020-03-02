@@ -1,7 +1,7 @@
 <template lang="pug">
 .login
   .login-title-bar
-    img.back(src="https://cunchu.site/puge/login/back.png" go="//login/moveToRight/moveFromLeft/true")
+    img.back(src="https://cunchu.site/puge/login/back.png" o-tap="history.back(-1)")
     .register(go="//register/moveToLeft/moveFromRight/true") 注册
   view.router(name="loginContent")
     .view-login(route="login")
@@ -22,18 +22,22 @@
       //- 装饰背景
       img.bg-1(src="https://cunchu.site/puge/login/art.png")
       p 欢迎注册PUGE账号
-      input.register-input(type="text" placeholder="用户名")
-      input.register-input(type="password" placeholder="密码")
-      input.register-input(type="password" placeholder="确认密码")
-      input.register-input(type="text" placeholder="邮箱")
-      .button() 注册
+      input.register-input(type="text" o-value="this.data.registerUserName" placeholder="用户名")
+      input.register-input(type="password" o-value="this.data.registerPassWord" placeholder="密码")
+      input.register-input(type="password" o-value="this.data.registerPassWordR" placeholder="确认密码")
+      input.register-input(type="text" o-value="this.data.registerEMail" placeholder="邮箱")
+      .button(o-tap="register") 注册
 </template>
 
 <script>
   module.exports = {
     data: {
       userName: "puge",
-      passWord: "mmit7750"
+      passWord: "mmit7750",
+      registerUserName: "",
+      registerPassWord: "",
+      registerPassWordR: "",
+      registerEMail: ""
     },
     created: function () {
       // 全局路由动画设置
@@ -55,6 +59,35 @@
           })
         }
       })
+    },
+    register: function () {
+      if (!this.data.registerUserName) {
+        owo.tool.toast('用户名不能为空哦!')
+        return
+      }
+      if (!this.data.registerPassWord) {
+        owo.tool.toast('密码不能为空哦!')
+        return
+      }
+      if (!this.data.registerPassWordR) {
+        owo.tool.toast('重复密码不能为空哦!')
+        return
+      }
+      if (!this.data.registerEMail) {
+        owo.tool.toast('邮箱地址不能为空哦!')
+        return
+      }
+      if (this.data.registerPassWord !== this.data.registerPassWordR) {
+        owo.tool.toast('两次输入的密码不一致哦!')
+        return
+      }
+      fetch(`http://154.8.196.163:8006/register?username=${this.data.registerUserName}&password=${this.data.registerPassWord}&mail=${this.data.registerPassWord}`).then((response) => {return response.json();}).then((res) => {
+        if (res.err === 0) {
+          owo.tool.toast('注册成功!')
+        } else {
+          owo.tool.toast(`注册失败: ${res.message}`)
+        }
+      })
     }
   }
 </script>
@@ -66,27 +99,7 @@
   height: 100%;
   background-color: white;
 }
-.login-title-bar {
-  display: flex;
-  justify-content: space-between;
-  height: 45px;
-  align-items: center;
-  .back {
-    width: 12px;
-    margin: 13px;
-    display: block;
-  }
-  .register {
-    font-size: 20px;
-    line-height: 45px;
-    padding-right: 10px;
-  }
-  .active {
-    opacity: 0;
-    user-select: none;
-    pointer-events: none;
-  }
-}
+
 .image-box img {
   height: 160px;
   display: block;

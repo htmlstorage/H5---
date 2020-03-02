@@ -108,6 +108,11 @@
 			"name": "three",
 			"src": "./src/page/three.owo",
 			"type": "page"
+		},
+		{
+			"name": "log",
+			"src": "/src/page/log.owo",
+			"type": "page"
 		}
 	],
 	"mode": {
